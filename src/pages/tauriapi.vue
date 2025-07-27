@@ -88,9 +88,9 @@
                         <el-menu-item index="3-2">{{
                             t('websiteAdjust')
                         }}</el-menu-item>
-                        <el-menu-item index="3-3">{{
-                            t('listenData')
-                        }}</el-menu-item>
+                        <el-menu-item index="3-3">
+                            {{ t('listenData') }}
+                        </el-menu-item>
                         <el-menu-item index="3-4">{{
                             t('dataStatistics')
                         }}</el-menu-item>
@@ -106,15 +106,15 @@
                         <el-menu-item index="3-13">
                             {{ t('disableCors') }}
                         </el-menu-item>
-                        <el-menu-item index="3-14">{{
-                            t('paymentTest')
-                        }}</el-menu-item>
-                        <el-menu-item index="3-15">{{
-                            t('fileCompression')
-                        }}</el-menu-item>
-                        <el-menu-item index="3-16">{{
-                            t('downloadResource')
-                        }}</el-menu-item>
+                        <el-menu-item v-if="devShow" index="3-14">
+                            {{ t('paymentTest') }}
+                        </el-menu-item>
+                        <el-menu-item index="3-15">
+                            {{ t('fileCompression') }}
+                        </el-menu-item>
+                        <el-menu-item index="3-16">
+                            {{ t('downloadResource') }}
+                        </el-menu-item>
                     </el-sub-menu>
                     <el-menu-item v-if="isTauri()" index="4">
                         <el-icon>
@@ -152,7 +152,7 @@
                 <!-- image -->
                 <img
                     v-if="menuIndex !== '4'"
-                    :src="image || ppIcon"
+                    :src="imageRef || ppIcon"
                     alt="image"
                     class="image"
                     @click="openUrl(urlMap.ppofficial)"
@@ -727,7 +727,7 @@
                 <div v-else-if="menuIndex === '4'" class="cardContent">
                     <About />
                 </div>
-                <!-- 支付测试 -->
+                <!-- pay method -->
                 <div v-else-if="menuIndex === '3-14'" class="cardContent">
                     <h1 class="cardTitle">pay method</h1>
                     <p>provide pay method</p>
@@ -757,6 +757,8 @@
                             paypal
                         </el-button>
                         <el-button @click="getPpApis"> ppapis </el-button>
+                        <el-button @click="getEncrypt"> encrypt加密 </el-button>
+                        <el-button @click="getDecrypt"> decrypt解密 </el-button>
                     </div>
                 </div>
                 <!-- plugin-os api -->
@@ -1321,6 +1323,9 @@ import {
     zPayMchId,
     zPaySignKey,
     creatDeviceid,
+    devPassword,
+    decryptData,
+    encryptData,
 } from '@/utils/common'
 import About from '@/pages/about.vue'
 import {
@@ -1462,9 +1467,10 @@ const githubApiLimit = ref({
 })
 
 const textarea = ref('')
-const image = ref()
+const imageRef = ref()
 const defaultMenu = ref('0-1')
 const menuIndex = ref('0-1')
+const devShow = ref(localStorage.getItem('devShow') || false)
 
 // dialog
 const dialogTitle = ref(t('payTest'))
@@ -1543,7 +1549,7 @@ const defaultWindowIconApi = async () => {
     ctx.putImageData(imageData, 0, 0)
     const base64 = canvas.toDataURL('image/png')
     console.log('base64', base64)
-    image.value = base64
+    imageRef.value = base64
 }
 
 // app:获取应用信息
@@ -2143,6 +2149,20 @@ const getPpApis = async () => {
     }
 }
 
+// get encrypt
+const getEncrypt = async () => {
+    const response = await encryptData(textarea.value)
+    console.log('response----', response)
+    textarea.value = response
+}
+
+// get decrypt
+const getDecrypt = async () => {
+    const response: any = await decryptData(textarea.value)
+    console.log('response----', response)
+    textarea.value = response
+}
+
 // get yun pay code
 const getYunPayCode = async (payMathod: string = 'weixin') => {
     console.log('getYunPayCode')
@@ -2585,9 +2605,15 @@ const downFile = async (selPath: boolean = true) => {
 let vConsole: any = null
 const debugHandler = (type: string = 'open') => {
     if (type === 'open') {
-        vConsole = new window.VConsole()
+        if (textarea.value === devPassword) {
+            devShow.value = true
+            vConsole = new window.VConsole()
+        } else {
+            oneMessage.error('请输入开启调试密码')
+        }
     } else {
-        vConsole.destroy()
+        devShow.value = false
+        vConsole && vConsole.destroy()
     }
 }
 

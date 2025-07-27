@@ -371,7 +371,6 @@ import {
     isDev,
     syncAllBranch,
 } from '@/utils/common'
-import { confirm } from '@tauri-apps/plugin-dialog'
 import ppconfig from '@root/scripts/ppconfig.json'
 import ppIcon from '@/assets/images/pakeplus.png'
 import { useI18n } from 'vue-i18n'
@@ -399,7 +398,12 @@ const copyToken = () => {
 
 // logout
 const logout = async () => {
-    localStorage.clear()
+    localStorage.removeItem('token')
+    localStorage.removeItem('userInfo')
+    localStorage.removeItem('projectList')
+    localStorage.removeItem('releases')
+    localStorage.removeItem('currentProject')
+    localStorage.removeItem('shaInfo')
     store.$reset()
 }
 
@@ -738,23 +742,7 @@ const delProject = () => {
 const creatProject = async () => {
     creatLoading.value = true
     proExist.value = false
-    if (branchName.value === 'ppdebug') {
-        var _ = new window.VConsole()
-        branchName.value = ''
-        creatLoading.value = false
-        branchDialog.value = false
-        return
-    } else if (branchName.value === 'ppdev') {
-        router.push('/tauriapi')
-        branchName.value = ''
-        creatLoading.value = false
-        branchDialog.value = false
-        return
-    } else if (
-        branchName.value === 'main' ||
-        branchName.value === 'web2' ||
-        branchName.value === webBranch
-    ) {
+    if (branchName.value === 'main' || branchName.value === webBranch) {
         oneMessage.error(t('banned'))
         branchName.value = ''
         creatLoading.value = false
