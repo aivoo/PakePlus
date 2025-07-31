@@ -1,4 +1,4 @@
-# 不再支持 Github Token 方式打包，请使用本地打包的方式
+# 很快将不再支持 Github Token 方式打包，请使用本地打包的方式
 
 # 获取 Token
 

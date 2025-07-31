@@ -178,6 +178,6 @@ pnpm run build
     <img src="https://github.com/Sjj1024/PakePlus/raw/main/docs/static/imgs/qqpp3.jpg" width=200/>
  </p>
 
-## Star History
+<!-- ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=Sjj1024/PakePlus&type=Date)](https://www.star-history.com/#Sjj1024/PakePlus&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=Sjj1024/PakePlus&type=Date)](https://www.star-history.com/#Sjj1024/PakePlus&Date) -->
